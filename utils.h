@@ -4,6 +4,8 @@
 typedef unsigned long byteoffset;
 typedef unsigned int  entrycount;
 
+#define false 0
+#define true 1
 typedef unsigned char bool;
 
 
@@ -16,6 +18,16 @@ typedef struct {
 	unsigned long  interests_first;
 	unsigned short interest_n;
 } Person;
+
+typedef struct {
+       unsigned long  person_id;       // align8, starts at 0
+       unsigned long  knows_first;     // align8, starts at 8
+       unsigned long  interests_first; // align8, starts at 24
+       unsigned short birthday;        // align2, starts at 32
+       unsigned short location;        // align2, starts at 34
+       unsigned short knows_n;         // align2, starts at 36
+       unsigned short interest_n;      // align8, starts at 38
+} Person2;
 
 typedef struct { 
     unsigned long  person_id;
@@ -108,6 +120,7 @@ void* mmapopen(char* filename, byteoffset *filelen, bool write) {
         fprintf(stderr, "failed to mmap %s\n", filename);
         exit(1);
     }
+    madvise(mapaddr, sbuf.st_size, MADV_SEQUENTIAL);
     *filelen = sbuf.st_size;
     return mapaddr;
 }
